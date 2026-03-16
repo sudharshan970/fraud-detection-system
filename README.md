@@ -3,7 +3,7 @@
 A machine learning web application to detect fraudulent credit card transactions in real time using XGBoost.
 
 ## 🚀 Live Demo
-[Click here to view the live dashboard](https://sudharshan970-fraud-detection-system.streamlit.app)
+[Click here to view the live dashboard](https://fraud-detection-system-4p3utaputndmcbn29wdbyq.streamlit.app)
 
 ## 📁 Download Project Files
 These files are too large for GitHub — download from Google Drive:
