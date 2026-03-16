@@ -1,3 +1,4 @@
+%%writefile "C:\Users\Rupendra T\Fraud detection system project\app.py"
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -14,8 +15,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 
 # ── Auto download files from Google Drive ──────────
-MODEL_ID = "https://drive.google.com/file/d/1pYrC72kfvhrbbxdfxqPN_u2owlUy45km/view?usp=sharing "
-CSV_ID   = "https://drive.google.com/file/d/1gjWlzZfaA4T0U1W4ApL-HfIti7n0wAei/view?usp=sharing  "
+MODEL_ID = "1pYrC72kfvhrbbxdfxqPN_u2owlUy45km"
+CSV_ID   = "1gjWlzZfaA4T0U1W4ApL-HfIti7n0wAei"
 
 if not os.path.exists("fraud_detection_model.pkl"):
     with st.spinner("Downloading model... please wait"):
@@ -93,10 +94,16 @@ hr { border-color: #1e2d3d !important; }
     line-height: 1;
 }
 .block-container { padding-top: 1.5rem !important; }
+.stNumberInput input {
+    background: #111827 !important;
+    border: 1px solid #1e2d3d !important;
+    color: #e2e8f0 !important;
+    border-radius: 8px !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Load data ──────────────────────────────────────
+# ── Load model and data ────────────────────────────
 @st.cache_resource
 def load_model():
     return joblib.load(MODEL_PATH)
@@ -107,7 +114,7 @@ def load_data():
     scaler = StandardScaler()
     df['Amount_scaled'] = scaler.fit_transform(df[['Amount']])
     df['Time_scaled']   = scaler.fit_transform(df[['Time']])
-    df.drop(['Amount','Time'], axis=1, inplace=True)
+    df.drop(['Amount', 'Time'], axis=1, inplace=True)
     X = df.drop('Class', axis=1)
     y = df['Class']
     _, X_test, _, y_test = train_test_split(
@@ -147,7 +154,7 @@ page = st.sidebar.radio("", [
     "🔍  Live Predictor"
 ])
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"""
+st.sidebar.markdown("""
 <div style='padding:12px;background:#111827;border-radius:10px;border:1px solid #1e2d3d'>
   <div style='font-size:11px;color:#475569;margin-bottom:6px;text-transform:uppercase'>Project Info</div>
   <div style='font-size:12px;color:#64748b;line-height:1.8'>
@@ -159,7 +166,9 @@ st.sidebar.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# ── PAGE 1 SUMMARY ─────────────────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 1 — SUMMARY
+# ══════════════════════════════════════════════════
 if page == "📊  Summary":
     st.markdown("<h1>📊 Fraud Detection System — Summary</h1>", unsafe_allow_html=True)
     st.caption("XGBoost model — 56,962 real credit card transactions tested")
@@ -186,7 +195,8 @@ if page == "📊  Summary":
         ))
         fig.update_layout(
             title=dict(text='Detection Results', font=dict(color='#e2e8f0')),
-            height=380, plot_bgcolor='#111827', paper_bgcolor='#111827',
+            height=380,
+            plot_bgcolor='#111827', paper_bgcolor='#111827',
             font=dict(color='#94a3b8'),
             xaxis=dict(gridcolor='#1e2d3d'),
             yaxis=dict(gridcolor='#1e2d3d')
@@ -209,7 +219,9 @@ if page == "📊  Summary":
         )
         st.plotly_chart(fig2, use_container_width=True)
 
-# ── PAGE 2 MODEL SCORES ────────────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 2 — MODEL SCORES
+# ══════════════════════════════════════════════════
 elif page == "🏆  Model Scores":
     st.markdown("<h1>🏆 Model Performance Comparison</h1>", unsafe_allow_html=True)
     st.caption("All 4 models trained on creditcard.csv with SMOTE balancing")
@@ -253,7 +265,9 @@ elif page == "🏆  Model Scores":
     )
     st.plotly_chart(fig, use_container_width=True)
 
-# ── PAGE 3 ROC CURVE ───────────────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 3 — ROC CURVE
+# ══════════════════════════════════════════════════
 elif page == "📈  ROC Curve":
     st.markdown("<h1>📈 ROC Curve — XGBoost</h1>", unsafe_allow_html=True)
     st.caption("Higher AUC = better fraud separation")
@@ -286,7 +300,9 @@ elif page == "📈  ROC Curve":
     st.plotly_chart(fig, use_container_width=True)
     st.success(f"AUC-ROC: **{auc:.4f}** — Near perfect fraud detection")
 
-# ── PAGE 4 CONFUSION MATRIX ────────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 4 — CONFUSION MATRIX
+# ══════════════════════════════════════════════════
 elif page == "🔢  Confusion Matrix":
     st.markdown("<h1>🔢 Confusion Matrix — XGBoost</h1>", unsafe_allow_html=True)
     st.caption("Your real test set results")
@@ -317,7 +333,9 @@ elif page == "🔢  Confusion Matrix":
     )
     st.plotly_chart(fig, use_container_width=True)
 
-# ── PAGE 5 FEATURE IMPORTANCE ──────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 5 — FEATURE IMPORTANCE
+# ══════════════════════════════════════════════════
 elif page == "⭐  Feature Importance":
     st.markdown("<h1>⭐ Feature Importance — XGBoost</h1>", unsafe_allow_html=True)
     st.caption("Top features the model uses to detect fraud")
@@ -351,7 +369,9 @@ elif page == "⭐  Feature Importance":
         )
         st.plotly_chart(fig, use_container_width=True)
 
-# ── PAGE 6 TRANSACTIONS ────────────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 6 — TRANSACTIONS
+# ══════════════════════════════════════════════════
 elif page == "📋  Transactions":
     st.markdown("<h1>📋 All Fraud Transactions</h1>", unsafe_allow_html=True)
     st.caption("98 actual fraud cases from your test set")
@@ -397,7 +417,9 @@ elif page == "📋  Transactions":
         use_container_width=True, hide_index=True
     )
 
-# ── PAGE 7 LIVE PREDICTOR ──────────────────────────
+# ══════════════════════════════════════════════════
+# PAGE 7 — LIVE PREDICTOR
+# ══════════════════════════════════════════════════
 elif page == "🔍  Live Predictor":
     st.markdown("<h1>🔍 Live Fraud Predictor</h1>", unsafe_allow_html=True)
     st.caption("Enter transaction values — model predicts instantly")
@@ -420,7 +442,7 @@ elif page == "🔍  Live Predictor":
 
     col1, col2 = st.columns(2)
     with col1:
-        amount = st.number_input("Amount (€)", value=float(d['amount']), step=0.01, format="%.2f")
+        amount = st.number_input("Amount (EUR)", value=float(d['amount']), step=0.01, format="%.2f")
         v1     = st.number_input("V1", value=float(d['v1']), step=0.0001, format="%.4f")
         v2     = st.number_input("V2", value=float(d['v2']), step=0.0001, format="%.4f")
     with col2:
@@ -428,7 +450,7 @@ elif page == "🔍  Live Predictor":
         v4     = st.number_input("V4", value=float(d['v4']), step=0.0001, format="%.4f")
 
     st.markdown("")
-    if st.button("🔍 Run Fraud Detection", type="primary", use_container_width=True):
+    if st.button("Run Fraud Detection", type="primary", use_container_width=True):
         sample = X_test.iloc[[0]].copy()
         sample.iloc[0, sample.columns.get_loc('V1')]            = v1
         sample.iloc[0, sample.columns.get_loc('V2')]            = v2
@@ -445,7 +467,7 @@ elif page == "🔍  Live Predictor":
             <div style='background:rgba(239,68,68,0.1);border:1px solid #ef4444;
                         border-radius:12px;padding:20px 24px'>
               <div style='font-size:22px;font-weight:700;color:#ef4444'>
-                🚨 FRAUD DETECTED
+                FRAUD DETECTED
               </div>
               <div style='font-size:14px;color:#94a3b8;margin-top:6px'>
                 Fraud Probability:
@@ -458,7 +480,7 @@ elif page == "🔍  Live Predictor":
             <div style='background:rgba(16,185,129,0.1);border:1px solid #10b981;
                         border-radius:12px;padding:20px 24px'>
               <div style='font-size:22px;font-weight:700;color:#10b981'>
-                ✅ LEGITIMATE TRANSACTION
+                LEGITIMATE TRANSACTION
               </div>
               <div style='font-size:14px;color:#94a3b8;margin-top:6px'>
                 Fraud Probability:
@@ -473,4 +495,4 @@ elif page == "🔍  Live Predictor":
         r1,r2,r3 = st.columns(3)
         r1.markdown(f"<div class='stat-banner'><div class='stat-banner-title'>Prediction</div><div class='stat-banner-value' style='font-size:18px;color:{'#ef4444' if pred==1 else '#10b981'}'>{'FRAUD' if pred==1 else 'LEGIT'}</div></div>", unsafe_allow_html=True)
         r2.markdown(f"<div class='stat-banner'><div class='stat-banner-title'>Fraud Probability</div><div class='stat-banner-value' style='font-size:18px;color:{'#ef4444' if pred==1 else '#10b981'}'>{prob:.4f}%</div></div>", unsafe_allow_html=True)
-        r3.markdown(f"<div class='stat-banner'><div class='stat-banner-title'>Amount</div><div class='stat-banner-value' style='font-size:18px;color:#3b82f6'>€{amount:.2f}</div></div>", unsafe_allow_html=True)
+        r3.markdown(f"<div class='stat-banner'><div class='stat-banner-title'>Amount</div><div class='stat-banner-value' style='font-size:18px;color:#3b82f6'>EUR {amount:.2f}</div></div>", unsafe_allow_html=True)
