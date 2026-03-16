@@ -1,10 +1,11 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import joblib
+import os
+import gdown
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -12,9 +13,26 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 
-# ── HARDCODED PATHS ────────────────────────────────
-MODEL_PATH = r'C:\Users\Rupendra T\Fraud detection system project\fraud_detection_model.pkl'
-DATA_PATH  = r'C:\Users\Rupendra T\Fraud detection system project\creditcard.csv'
+# ── Auto download files from Google Drive ──────────
+MODEL_ID = "https://drive.google.com/file/d/1pYrC72kfvhrbbxdfxqPN_u2owlUy45km/view?usp=sharing "
+CSV_ID   = "https://drive.google.com/file/d/1gjWlzZfaA4T0U1W4ApL-HfIti7n0wAei/view?usp=sharing  "
+
+if not os.path.exists("fraud_detection_model.pkl"):
+    with st.spinner("Downloading model... please wait"):
+        gdown.download(
+            f"https://drive.google.com/uc?id={MODEL_ID}",
+            "fraud_detection_model.pkl", quiet=False
+        )
+
+if not os.path.exists("creditcard.csv"):
+    with st.spinner("Downloading dataset... please wait (143MB)"):
+        gdown.download(
+            f"https://drive.google.com/uc?id={CSV_ID}",
+            "creditcard.csv", quiet=False
+        )
+
+MODEL_PATH = "fraud_detection_model.pkl"
+DATA_PATH  = "creditcard.csv"
 
 st.set_page_config(
     page_title="Fraud Detection System",
